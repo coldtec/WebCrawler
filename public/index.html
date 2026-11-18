@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coldtec Artikelstammdaten</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Coldtec Artikelstammdaten</h1>
+  <ol class="steps">
+    <li id="step-ind-1" class="active">1 Erfassen</li>
+    <li id="step-ind-2">2 Prüfen</li>
+    <li id="step-ind-3">3 Fertig</li>
+  </ol>
+</header>
+
+<main>
+  <div id="global-msg" class="msg hidden"></div>
+
+  <!-- Schritt 1: Erfassen -->
+  <section id="step1">
+    <form id="form" novalidate>
+      <fieldset>
+        <legend>Pflichtfelder</legend>
+        <div class="grid">
+          <label>EAN <input name="ean" inputmode="numeric" autocomplete="off"></label>
+          <label>Artikelnummer * <input name="artikelnr" autocomplete="off"></label>
+          <label class="wide">Artikelbezeichnung * <input name="bezeichnung" autocomplete="off"></label>
+          <label>Artikelgruppe *
+            <select name="gruppe"><option value="">– bitte wählen –</option></select>
+          </label>
+          <label>Preis (CHF) * <input name="preis" inputmode="decimal" placeholder="z.B. 59.90" autocomplete="off"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Shop-Texte</legend>
+        <div class="gen-row">
+          <button type="button" id="btn-generate">Texte automatisch generieren</button>
+          <span id="gen-status" class="status"></span>
+        </div>
+        <div id="gen-error" class="msg error hidden"></div>
+        <div id="quelle-box" class="msg info hidden"><strong>Quellenhinweis:</strong> <span id="quelle-text"></span></div>
+        <input type="hidden" name="quellenHinweis">
+
+        <label>Keywords <small>(kommagetrennt)</small>
+          <input name="keywords" autocomplete="off">
+        </label>
+        <label>Shop-Kurzbeschrieb <small>(ein Stichpunkt pro Zeile)</small>
+          <textarea name="kurz" rows="4"></textarea>
+        </label>
+        <label>Shop-Langbeschrieb <small>(Absätze durch Leerzeile trennen)</small>
+          <textarea name="lang" rows="6"></textarea>
+        </label>
+        <div class="sub">
+          <h3>Verkaufstext CT</h3>
+          <label>Einleitung
+            <textarea name="verkaufIntro" rows="5"></textarea>
+          </label>
+          <label>Überschrift
+            <input name="verkaufHeading" value="Produktinformation" autocomplete="off">
+          </label>
+          <label>Merkmale <small>(ein Merkmal pro Zeile)</small>
+            <textarea name="verkaufMerkmale" rows="7"></textarea>
+          </label>
+        </div>
+      </fieldset>
+
+      <details>
+        <summary>Erweiterte Felder (Standardwerte)</summary>
+        <div class="grid">
+          <label>ProdukttypShop <input name="produkttypShop" value="simple"></label>
+          <label>SichtbarkeitShop <input name="sichtbarkeitShop" value="4"></label>
+          <label>vonRMAausschliessen
+            <select name="vonRMAausschliessen"><option>N</option><option>Y</option></select>
+          </label>
+          <label>NichtaufToppreise
+            <select name="nichtAufToppreise"><option>Y</option><option>N</option></select>
+          </label>
+          <label>KonfigurationGrösse <input name="konfigurationGroesse"></label>
+          <label>KonfigurationFarbe <input name="konfigurationFarbe"></label>
+          <label>StockwerkPauschale <input name="stockwerkPauschale"></label>
+          <label>StockwerkproGerät <input name="stockwerkProGeraet"></label>
+          <label>InstallationPauschale <input name="installationPauschale"></label>
+          <label>InstallationproGerät <input name="installationProGeraet"></label>
+          <label>Vaterartikel <input name="vaterartikel"></label>
+        </div>
+      </details>
+
+      <div class="actions">
+        <button type="submit" class="primary" id="btn-to-review">Weiter zur Prüfung</button>
+        <span id="review-status" class="status"></span>
+      </div>
+    </form>
+  </section>
+
+  <!-- Schritt 2: Prüfen -->
+  <section id="step2" class="hidden">
+    <div id="review-quelle" class="msg info"></div>
+    <h2>FSP_Import.csv</h2>
+    <table class="fields" id="tbl-fsp"><thead><tr><th>Feld</th><th>Exportwert</th></tr></thead><tbody></tbody></table>
+    <h3>Rohtext</h3>
+    <pre id="raw-fsp"></pre>
+
+    <h2>CT_Import.csv</h2>
+    <table class="fields" id="tbl-ct"><thead><tr><th>Feld</th><th>Exportwert</th></tr></thead><tbody></tbody></table>
+    <h3>Rohtext</h3>
+    <pre id="raw-ct"></pre>
+
+    <div id="export-error" class="msg error hidden"></div>
+    <div class="actions">
+      <button type="button" id="btn-back">Zurück bearbeiten</button>
+      <button type="button" class="primary" id="btn-export">Dateien erzeugen</button>
+      <span id="export-status" class="status"></span>
+    </div>
+    <p class="hint">Ziel: <code id="out-dir-2"></code> · Kodierung Windows-1252, Zeilenende CRLF</p>
+  </section>
+
+  <!-- Schritt 3: Fertig -->
+  <section id="step3" class="hidden">
+    <div class="msg success">
+      <strong>Dateien erfolgreich erzeugt.</strong>
+      <ul id="done-files"></ul>
+      <p>Ordner: <code id="done-dir"></code></p>
+    </div>
+    <div class="actions">
+      <button type="button" class="primary" id="btn-new">Neuen Artikel erfassen</button>
+    </div>
+  </section>
+
+  <!-- Verwaltung -->
+  <details id="mapping-panel" class="panel">
+    <summary>Artikelgruppen verwalten</summary>
+    <table class="fields" id="tbl-mapping"><thead><tr><th>Artikelgruppe</th><th>Google-Kat.-Code</th><th></th></tr></thead><tbody></tbody></table>
+    <form id="mapping-form" class="inline">
+      <input name="gruppe" placeholder="Artikelgruppe" required>
+      <input name="code" placeholder="Google-Kat.-Code" required>
+      <button type="submit">Hinzufügen / ändern</button>
+    </form>
+    <div id="mapping-msg" class="msg error hidden"></div>
+  </details>
+
+  <details id="history-panel" class="panel">
+    <summary>Historie (letzte Exporte)</summary>
+    <table class="fields" id="tbl-history"><thead><tr><th>Zeit</th><th>Artikelnr.</th><th>Bezeichnung</th><th>EAN</th><th>Dateien</th></tr></thead><tbody></tbody></table>
+  </details>
+</main>
+
+<footer>
+  <span id="cfg-info"></span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

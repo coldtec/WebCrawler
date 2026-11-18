@@ -1,0 +1,77 @@
+:root {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --text: #1d2330;
+  --muted: #5f6b7a;
+  --border: #d5dae1;
+  --accent: #0b5cad;
+  --accent-text: #ffffff;
+  --error-bg: #fdecec; --error: #a4161a;
+  --info-bg: #eaf2fb; --info: #0b4a8a;
+  --ok-bg: #e9f6ec; --ok: #1e6b34;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+header {
+  background: var(--card); border-bottom: 1px solid var(--border);
+  padding: 12px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px;
+}
+h1 { font-size: 1.25rem; margin: 0; }
+h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+h3 { font-size: 0.95rem; margin: 16px 0 6px; color: var(--muted); }
+.steps { list-style: none; display: flex; gap: 8px; margin: 0; padding: 0; }
+.steps li { padding: 4px 12px; border-radius: 999px; background: var(--bg); color: var(--muted); font-size: 0.9rem; }
+.steps li.active { background: var(--accent); color: var(--accent-text); }
+main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; }
+section, .panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+fieldset { border: 1px solid var(--border); border-radius: 6px; margin: 0 0 16px; padding: 12px 16px; }
+legend { font-weight: 600; padding: 0 6px; }
+label { display: block; margin: 8px 0; font-weight: 500; }
+label small { color: var(--muted); font-weight: 400; }
+input, select, textarea {
+  display: block; width: 100%; margin-top: 4px; padding: 7px 9px;
+  border: 1px solid var(--border); border-radius: 5px; font: inherit; background: #fff; color: var(--text);
+}
+textarea { resize: vertical; }
+input.invalid, select.invalid { border-color: var(--error); box-shadow: 0 0 0 2px var(--error-bg); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0 16px; }
+.grid .wide { grid-column: 1 / -1; }
+.sub { border-top: 1px dashed var(--border); margin-top: 12px; }
+details summary { cursor: pointer; font-weight: 600; padding: 4px 0; }
+details > .grid { margin-top: 8px; }
+button {
+  font: inherit; padding: 8px 16px; border-radius: 5px; border: 1px solid var(--border);
+  background: #fff; color: var(--text); cursor: pointer;
+}
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: 0.55; cursor: progress; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+button.danger { color: var(--error); }
+button.small { padding: 3px 10px; font-size: 0.85rem; }
+.actions, .gen-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
+.status { color: var(--muted); }
+.msg { padding: 10px 14px; border-radius: 6px; margin: 10px 0; }
+.msg.error { background: var(--error-bg); color: var(--error); }
+.msg.info { background: var(--info-bg); color: var(--info); }
+.msg.success { background: var(--ok-bg); color: var(--ok); }
+.hidden { display: none !important; }
+table.fields { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+table.fields th, table.fields td { border: 1px solid var(--border); padding: 5px 8px; text-align: left; vertical-align: top; }
+table.fields thead th { background: var(--bg); }
+table.fields tbody th { width: 210px; font-weight: 500; white-space: nowrap; }
+table.fields td { font-family: Consolas, "Courier New", monospace; word-break: break-word; }
+table.fields td.empty::after { content: "(leer)"; color: var(--muted); font-style: italic; font-family: inherit; }
+pre {
+  background: #1f2430; color: #e8eaf0; padding: 12px; border-radius: 6px;
+  overflow-x: auto; white-space: pre; font-size: 0.82rem;
+}
+form.inline { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+form.inline input { width: auto; flex: 1 1 180px; margin: 0; }
+.hint { color: var(--muted); font-size: 0.85rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.82rem; padding: 0 16px 24px; }
+@media (max-width: 600px) {
+  table.fields tbody th { white-space: normal; width: 40%; }
+}
